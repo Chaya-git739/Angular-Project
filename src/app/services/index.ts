@@ -12,3 +12,6 @@ export * from './toast.service'; // שירות הודעות טוסט
 export * from './loading.service'; // שירות מצב טעינה גלובלי
 export * from './basket'; // שירות סל חלופי
 export * from './Admin'; // שירות אדמין
+export * from './logger.service'; // שירות logging
+export * from './email.service'; // שירות דוא"ל
+export * from './config.service'; // שירות תצורה

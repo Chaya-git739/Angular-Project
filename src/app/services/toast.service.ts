@@ -1,43 +1,98 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
+import { ConfigService } from './config.service';
 
 export interface Toast {
   message: string;
   type: 'success' | 'error' | 'info' | 'warning';
   duration?: number;
+  id?: string;
 }
 
+/**
+ * Toast notification service
+ * Provides methods for displaying temporary notifications
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class ToastService {
   private readonly toastSubject = new Subject<Toast>();
+  private readonly config = inject(ConfigService);
   readonly toast$ = this.toastSubject.asObservable();
 
-  show(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info', duration = 3000): void {
-    this.toastSubject.next({ message, type, duration });
+  /**
+   * Show a toast notification
+   */
+  show(
+    message: string,
+    type: 'success' | 'error' | 'info' | 'warning' = 'info',
+    duration?: number
+  ): void {
+    if (!message || message.trim().length === 0) {
+      return;
+    }
+
+    const toast: Toast = {
+      id: `toast-${Date.now()}-${Math.random()}`,
+      message: message.trim(),
+      type,
+      duration: duration || this.getDefaultDuration(type)
+    };
+
+    this.toastSubject.next(toast);
   }
 
-  success(message: string, duration = 3000): void {
-    this.show(message, 'success', duration);
+  /**
+   * Show success notification
+   */
+  success(message: string, duration?: number): void {
+    this.show(message, 'success', duration || this.config.ui.toastDuration);
   }
 
-  error(message: string, duration = 4000): void {
-    this.show(message, 'error', duration);
+  /**
+   * Show error notification
+   */
+  error(message: string, duration?: number): void {
+    this.show(message, 'error', duration || this.config.ui.toastErrorDuration);
   }
 
-  info(message: string, duration = 3000): void {
-    this.show(message, 'info', duration);
+  /**
+   * Show info notification
+   */
+  info(message: string, duration?: number): void {
+    this.show(message, 'info', duration || this.config.ui.toastDuration);
   }
 
-  warning(message: string, duration = 3000): void {
-    this.show(message, 'warning', duration);
+  /**
+   * Show warning notification
+   */
+  warning(message: string, duration?: number): void {
+    this.show(message, 'warning', duration || this.config.ui.toastDuration);
   }
 
+  /**
+   * Show confirmation dialog (browser native for now)
+   */
   confirm(message: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      const result = window.confirm(message);
-      resolve(result);
-    });
+    return Promise.resolve(window.confirm(message));
+  }
+
+  /**
+   * Get default duration based on type
+   */
+  private getDefaultDuration(type: string): number {
+    switch (type) {
+      case 'error':
+        return this.config.ui.toastErrorDuration;
+      case 'warning':
+        return this.config.ui.toastDuration;
+      case 'success':
+        return this.config.ui.toastDuration;
+      case 'info':
+        return this.config.ui.toastDuration;
+      default:
+        return this.config.ui.toastDuration;
+    }
   }
 }

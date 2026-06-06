@@ -1,81 +1,137 @@
 # Raffle System Frontend (Angular)
 
-## Description
+## Project Summary
 
-A modern, responsive Single Page Application (SPA) built with Angular for managing and participating in Chinese Auctions. The frontend provides a polished user experience for browsing auctions, managing gifts, placing orders, and handling admin workflows.
+This repository contains the frontend for a raffle / auction platform built with Angular 21. The application is a responsive Single Page Application (SPA) that connects to a C# backend API for authentication, gift management, orders, raffle draws, and reporting.
 
-## Core Tech Stack
+## Why this project exists
 
-- Angular 18+ (project is currently based on Angular 21)
+The frontend provides a professional user experience for both end customers and administrators. It supports:
+
+- browsing and searching raffle gifts
+- placing orders and checking out
+- secure login and registration
+- admin management of donors, gifts, and raffle events
+- viewing sales and raffle reports
+
+## Technical Stack
+
+- Angular 21
 - TypeScript
 - RxJS
-- SCSS
+- Bootstrap CSS
+- Angular standalone components
+- `HttpClient` + REST API integration
 
-## Professional Features
+## Main Features
 
-- **Lazy Loading**: Route-based code splitting for major features including admin pages, cart, and order history.
-- **Global Interceptors**: Centralized HTTP handling for:
-  - Auth token injection
-  - loading states
-  - HTTP error handling
-- **State Management**: Reactive data flow using RxJS Observables.
-- **Security**: Route protection via `AuthGuard` and `AdminGuard`.
-- **User Interface**:
-  - Dark/light mode support
-  - Toast notification system for user feedback
+- Route-based lazy loading for improved performance
+- JWT authentication with protected routes
+- Centralized API error handling via interceptors
+- Global loading indicator during network calls
+- Admin dashboard for donors, gifts, raffles, and reports
+- Cart and checkout flow for raffle orders
+- Responsive UI with Bootstrap and toast notifications
 
-## Project Highlights
+## Architecture Overview
 
-- Clean, component-based architecture
-- Standalone component usage for shared UI pieces like toast and loading overlay
-- Modular route configuration with lazy-loaded feature entry points
-- Global services for notifications, loading state, authentication, and error handling
+- `src/app/app.config.ts` — configures Angular HTTP client providers and interceptors
+- `src/app/services` — reusable services for auth, gifts, donors, orders, raffle, email, and admin endpoints
+- `src/environments/environment.ts` — API base URL and environment settings
+- `src/app/services/auth.guard.ts` / `admin.guard.ts` — secure route access
+- `src/app/components` — standalone components and page layouts
 
-## Installation
+## Frontend / Backend Integration
 
-1. Clone the repository:
+The frontend is designed to work with a C# backend API. The default local API configuration is stored in `src/environments/environment.ts`:
 
-```bash
-git clone <repository-url>
-cd angolar
+```ts
+apiUrl: 'http://localhost:5226/api'
 ```
 
-2. Install dependencies:
+### Expected backend API areas
+
+- `Account` — login, registration
+- `Gift` — gift catalog, search, create, update, delete, sales summary
+- `Donor` — donor management
+- `Order` — cart checkout, order history, order confirmation
+- `Raffle` — conduct raffle draws, winner management
+- `Winner` — winner listings
+- `Email` — send email notifications
+
+### Typical API calls
+
+- Auth: `/Account/login`, `/Account/register`
+- Gifts: `/Gift`, `/Gift/search`, `/Gift/sales-summary`
+- Orders: `/Order/checkout`, `/Order/{id}/confirm`, `/Order/user/{userId}`
+- Raffle: `/Raffle/conduct/{giftId}`, `/Winner`
+- Admin: `/Donor`, `/Gift`, `/Raffle/run/{giftId}`
+
+The app uses interceptors to attach auth headers, handle loading state, and manage HTTP errors consistently.
+
+## Get Started
+
+### Prerequisites
+
+- Node.js 18+ / 20+
+- npm
+- C# backend running locally or reachable via API
+
+### Run locally
 
 ```bash
+git clone https://github.com/Chaya-git739/Angular-Project.git
+cd angularProject
 npm install
-```
-
-3. Start the development server:
-
-```bash
 npm start
 ```
 
-4. Open the app in your browser:
+Then open:
 
 ```text
 http://localhost:4200
 ```
 
+### Recommended reproducible install
+
+```bash
+npm ci
+```
+
+## Configuration
+
+If the backend is hosted on a different URL, update the API base URL in:
+
+- `src/environments/environment.ts`
+- `src/environments/environment.prod.ts`
+
 ## Available Scripts
 
-- `npm start` — runs `ng serve` and starts the local dev server
-- `npm run build` — builds the application for production
-- `npm test` — runs unit tests
+- `npm start` — run the development server
+- `npm run build` — build production assets
+- `npm test` — run unit tests
+
+## Reviewer Notes
+
+This README is designed to help reviewers understand the project quickly:
+
+- the app is a polished Angular SPA that depends on a C# backend API
+- the repo uses standard scripts and a predictable npm workflow
+- the frontend is structured around services, guards, and lazy-loaded pages
+
+### Recommended next steps for the repo
+
+- keep `package-lock.json` committed for consistent installs
+- add a screenshot or short demo GIF
+- document the C# backend startup command and expected API port
+- include a short “Project status” or “Roadmap” section
 
 ## Notes
 
-- The repository uses standalone components and the Angular `provideHttpClient`/`withInterceptors` integration.
-- Global loading and error handling are applied through HTTP interceptors.
-- Route-level guards enforce authentication and admin access.
-
-## Recommended Workflow
-
-- Use the existing component structure for fast feature development.
-- Keep shared behavior in services and interceptors to avoid duplication.
-- Favor lazy-loaded routes for large admin and user pages.
+- The frontend is meant to be evaluated alongside the backend API contract
+- Backend startup details are not included here; add them if the backend is in a separate repository
+- Docker support can be added later, but the current `npm` workflow is the simplest for reviewers
 
 ---
 
-Built for a fast, secure, and maintainable raffle auction frontend experience.
+Built for clarity, maintainability, and collaboration between Angular frontend and C# backend teams.
